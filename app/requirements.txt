@@ -1,0 +1,6 @@
+fastapi[all]
+uvicorn
+pandas
+icecream
+isatools
+pyyaml

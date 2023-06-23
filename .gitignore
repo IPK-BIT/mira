@@ -1,0 +1,5 @@
+*.zip
+data/
+polnish/
+tmp/
+config.yml

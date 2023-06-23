@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  brapi-adapter:
+    build: ./app
+    ports: 
+      - 80:8000
+    volumes:
+      - ./app:/code
+      - ./data:/data
+      - ./config.yml:/config.yml
