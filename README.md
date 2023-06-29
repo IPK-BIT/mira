@@ -4,6 +4,24 @@ MIRA is a FastAPI application that enables access to MIAPPE-compliant ISA Tab ar
 
 ## Installation
 
+In addition to the contents of this repository, there need to be two inputs available. 
+- MIRA enables the access to a MIAPPE-compliant ISA Tab archive, so you need to specify in the docker-compose.yml, where the folder can be found. In the current version only one study with one assay is supported. In addition to the ISA files, a trait definition file and a data file need to be provided.
+- The second input is a configuration file. This allows basic configuration and is used as a resource for the endpoint GET /serverinfo. The structure of config.yml is shown in the example below.
+
+```
+server:
+  name: 'MIRA Testserver'
+  description: 'Some description for your new MIRA server'
+  documentation: 'http://<your info>/docs'
+  requireAuthorization: false
+contact:
+  organization:
+    name: 'Your Organization'
+    url: 'https://organization.org'
+    location: 'Country'
+  mail: 'mail@example.com'
+```
+
 Use docker compose to install the application.
 
 ```bash
