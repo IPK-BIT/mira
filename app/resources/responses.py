@@ -1,17 +1,17 @@
 from pydantic import BaseModel
-from pydantic.generics import GenericModel
+#from pydantic.generics import GenericModel
 from typing import TypeVar, Generic
 from resources import schemas
 
-T = TypeVar('T', bound=BaseModel)
+T = TypeVar('T')#, bound=BaseModel)
 
 class ServerInfoResponse(BaseModel):
     metadata: schemas.Metadata
     result: schemas.ServerInfo
 
-class Result(GenericModel, Generic[T]):
+class Result(BaseModel, Generic[T]):
     data: list[T]
 
-class Response(GenericModel, Generic[T]):
+class Response(BaseModel, Generic[T]):
     metadata: schemas.Metadata
     result: Result[T]

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+#from typing import Optional
 
 class Pagination(BaseModel):
     currentPage: int
@@ -34,85 +34,85 @@ class Season(BaseModel):
     year: str|None
 
 class Observation(BaseModel):
-    additionalInfo: dict|None
-    collector: str|None
-    externalReferences: list[ExternalReference]|None
-    geoCoordinates: GeoCoordinates|None
-    germplasmDbId: str|None
-    germplasmName: str|None
-    observationDbId: str|None
-    observationTimeStamp: str|None
-    observationUnitDbId: str|None
-    observationUnitName: str|None
-    observationVariableDbId: str|None
-    observationVariableName: str|None
-    season: Season|None
-    studyDbId: str|None
-    uploadedBy: str|None
-    value: str|None
+    additionalInfo: dict|None = None
+    collector: str|None = None
+    externalReferences: list[ExternalReference]|None = None
+    geoCoordinates: GeoCoordinates|None = None
+    germplasmDbId: str|None = None
+    germplasmName: str|None = None
+    observationDbId: str|None = None
+    observationTimeStamp: str|None = None
+    observationUnitDbId: str|None = None
+    observationUnitName: str|None = None
+    observationVariableDbId: str|None = None
+    observationVariableName: str|None = None
+    season: Season|None = None
+    studyDbId: str|None = None
+    uploadedBy: str|None = None
+    value: str|None = None
 
 class ObservationLevel(BaseModel):
-    levelCode: str|None
-    levelName: str|None
-    levelOrder: str|None
+    levelCode: str|None = None
+    levelName: str|None = None
+    levelOrder: str|None = None
 
 class Treatment(BaseModel):
-    factor: str|None
-    modality: str|None
+    factor: str|None = None
+    modality: str|None = None
 
 class ObservationUnitPosition(BaseModel):
-    entryType: str|None
-    geoCoordinates: GeoCoordinates|None
-    observationLevel: ObservationLevel|None
-    observationLevelRelationships: list[ObservationLevel]|None
-    positionCoordinateX: str|None
-    positionCoordinateXType: str|None
-    positionCoordinateY: str|None
-    positionCoordinateYType: str|None
+    entryType: str|None = None
+    geoCoordinates: GeoCoordinates|None = None
+    observationLevel: ObservationLevel|None = None
+    observationLevelRelationships: list[ObservationLevel]|None = None
+    positionCoordinateX: str|None = None
+    positionCoordinateXType: str|None = None
+    positionCoordinateY: str|None = None
+    positionCoordinateYType: str|None = None
 
 class ObservationUnit(BaseModel):
-    additionalInfo: dict|None
-    crossDbId: str|None
-    crossName: str|None
-    externalReferences: list[ExternalReference]|None
-    germplasmDbId: str|None
-    germplasmName: str|None
-    locationDbId: str|None
-    locationName: str|None
-    observationUnitDbId: str|None
-    observationUnitName: str|None
-    observationUnitPUI: str|None
-    observationUnitPosition: ObservationUnitPosition|None
-    observations: list[Observation]|None
-    programDbId: str|None
-    programName: str|None
-    seedLotDbId: str|None
-    seedLotName: str|None
-    studyDbId: str|None
-    studyName: str|None
-    treatments: list[Treatment]|None
-    trialDbId: str|None
-    trialName: str|None
+    additionalInfo: dict|None = None
+    crossDbId: str|None = None
+    crossName: str|None = None
+    externalReferences: list[ExternalReference]|None = None
+    germplasmDbId: str|None = None
+    germplasmName: str|None = None
+    locationDbId: str|None = None
+    locationName: str|None = None
+    observationUnitDbId: str|None = None
+    observationUnitName: str|None = None
+    observationUnitPUI: str|None = None
+    observationUnitPosition: ObservationUnitPosition|None = None
+    observations: list[Observation]|None = None
+    programDbId: str|None = None
+    programName: str|None = None
+    seedLotDbId: str|None = None
+    seedLotName: str|None = None
+    studyDbId: str|None = None
+    studyName: str|None = None
+    treatments: list[Treatment]|None = None
+    trialDbId: str|None = None
+    trialName: str|None = None
 
 class OntologyAnnotation(BaseModel):
-    URL: str|None
-    type: str|None
+    URL: str|None = None
+    type: str|None = None
 
 class Ontology(BaseModel):
-    documentationLinks: list[OntologyAnnotation]|None
-    ontologyDbId: str|None
-    ontologyName: str|None
-    version: str|None
+    documentationLinks: list[OntologyAnnotation]|None = None
+    ontologyDbId: str|None = None
+    ontologyName: str|None = None
+    version: str|None = None
 
 class Method(BaseModel):
-    additionalInfo: dict|None
-    bibliographicalReference: str|None
-    description: str|None
-    externalReferences: list[ExternalReference]|None
-    formula: str|None
-    methodClass: str|None
-    methodDbId: str|None
-    methodName: str|None
+    additionalInfo: dict|None = None
+    bibliographicalReference: str|None = None
+    description: str|None = None
+    externalReferences: list[ExternalReference]|None = None
+    formula: str|None = None
+    methodClass: str|None = None
+    methodDbId: str|None = None
+    methodName: str|None = None
     methodPUI: str|None
     ontologyReference: Ontology|None
 
@@ -155,7 +155,7 @@ class Scale(BaseModel):
     validValues: ValueRange|None
 
 class ObservationVariable(BaseModel):
-    additionalInfo: Optional[dict]
+    additionalInfo: dict|None
     commonCropName: str|None
     contextOfUse: list[str]|None
     defaultValue: str|None
@@ -177,10 +177,10 @@ class ObservationVariable(BaseModel):
     trait: Trait|None
 
 class Call(BaseModel):
-    contentTypes: list[str]
-    methods: list[str]
-    service: str
-    versions: list[str]
+    contentTypes: list[str]|None = None
+    methods: list[str]|None = None
+    service: str|None = None
+    versions: list[str]|None = None
 
 class ServerInfo(BaseModel):
     calls: list[Call]
@@ -190,4 +190,4 @@ class ServerInfo(BaseModel):
     organizationName: str|None
     organizationURL: str|None
     serverDescription: str|None
-    serverName: str|None
+    serverName: str|None = None
