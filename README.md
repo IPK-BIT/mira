@@ -20,6 +20,11 @@ contact:
     url: 'https://organization.org'
     location: 'Country'
   mail: 'mail@example.com'
+module:
+  enableCore: true
+  enablePhenotyping: true
+  enableGenotyping: false
+  enableGermplasm: false
 ```
 
 Use docker compose to install the application.

@@ -31,10 +31,29 @@ async def root():
 def favicon():
     return FileResponse('favicon.ico')
 
-app.include_router(core.router, tags=["BrAPI Core"])
-app.include_router(phenotyping.router, tags=["BrAPI Phenotyping"])
-app.include_router(genotyping.router, tags=["BrAPI Genotyping"])
-app.include_router(germplasm.router, tags=["BrAPI Germplasm"])
+try:
+    if dataload.config['module']['enableCore']:
+        app.include_router(core.router, tags=["BrAPI Core"])
+except:
+    app.include_router(core.router, tags=["BrAPI Core"])
+
+try:
+    if dataload.config['module']['enablePhenotyping']:
+        app.include_router(phenotyping.router, tags=["BrAPI Phenotyping"])
+except:
+    app.include_router(phenotyping.router, tags=["BrAPI Phenotyping"])
+
+try:
+    if dataload.config['module']['enableGenotyping']:
+        app.include_router(genotyping.router, tags=["BrAPI Genotyping"])
+except:
+    app.include_router(genotyping.router, tags=["BrAPI Genotyping"])
+
+try:
+    if dataload.config['module']['enableGermplasm']:
+        app.include_router(germplasm.router, tags=["BrAPI Germplasm"])
+except:
+    app.include_router(germplasm.router, tags=["BrAPI Germplasm"])
 
 try:
     if dataload.config['server']['requireAuthorization']:
