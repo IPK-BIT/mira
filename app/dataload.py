@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 import yaml
-from isatools import isatab
 from icecream import ic
 
 class MIAPPE:
@@ -13,9 +12,13 @@ class MIAPPE:
         dataname    = [d for d in files if d.startswith('d')][0]
         traitname   = [t for t in files if t.startswith('tdf')][0]
 
-        self.ISA = None
+        self.investigation = {}
         with open(os.path.join(directorypath, investname)) as fp:
-            self.ISA = isatab.load(fp)       
+            lines = fp.readlines()
+            for line in lines:
+                tmp = line.strip().split('\t')
+                if len(tmp)>1:
+                     self.investigation[tmp[0]] = tmp[1:]
         self.study                  = pd.read_csv(os.path.join(directorypath, studyname), delimiter='\t')
         self.assay                  = pd.read_csv(os.path.join(directorypath, assayname), delimiter='\t')
         self.datafile               = pd.read_csv(os.path.join(directorypath, dataname ), delimiter="\t")

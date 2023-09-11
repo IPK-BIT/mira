@@ -61,7 +61,7 @@ def get_observations(commons: CommonsDep, germplasmDbId: str|None = None, observ
                         observationUnitName     = row["Assay Name"],
                         observationVariableDbId = trait["Variable ID"],
                         observationVariableName = trait["Trait"],
-                        studyDbId               = dataload.miappe.ISA.studies[0].identifier,
+                        studyDbId               = dataload.miappe.investigation["Study Identifier"][0],
                         value                   = str(row[trait["Variable ID"]])
                     ))
     pagination = schemas.Pagination(
@@ -101,7 +101,7 @@ def get_observationunits(commons: CommonsDep):
             observationUnitDbId = observationUnit["Assay Name"],
             germplasmDbId       = sample["Source Name"],
             germplasmName       = sample["Characteristics[Infraspecific name]"],
-            studyDbId           = dataload.miappe.ISA.studies[0].identifier
+            studyDbId           = dataload.miappe.investigation["Study Identifier"][0]
         ))
     
     pagination = schemas.Pagination(
