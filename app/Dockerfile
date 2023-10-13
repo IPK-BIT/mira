@@ -6,4 +6,4 @@ ENV PYTHONUNBUFFERED 1
 COPY ./requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 COPY . /code/app
-CMD [ "uvicorn", "main:app", "--host", "0.0.0.0", "--reload" ]
+CMD [ "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "443" , "--ssl-keyfile=./certs/mira.key", "--ssl-certfile=./certs/mira.pem"]

@@ -3,3 +3,5 @@ data/
 polnish/
 tmp/
 config.yml
+app/certs
+*__pychache__/

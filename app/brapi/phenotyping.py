@@ -96,7 +96,6 @@ def get_observationunits(commons: CommonsDep):
                 break
             if studySample["Sample Name"]==observationUnit["Sample Name"]:
                 sample=studySample
-        #ic(sample)
         results.append(schemas.ObservationUnit(
             observationUnitDbId = observationUnit["Assay Name"],
             germplasmDbId       = sample["Source Name"],
@@ -208,9 +207,9 @@ def get_variables(commons: CommonsDep, observationVariableDbId: str|None = None,
                     ontologyReference=traitOntology
                 ),
                 scale=schemas.Scale(
-                    scaleName=trait["Scale"],
+                    scaleName=trait["Scale"] if type(trait["Scale"])==str else None,
                     validValues=valueRange,
-                    dataType=trait["Scale Type"],
+                    dataType=trait["Scale Type"] if type(trait["Scale Type"])==str else None,
                     units=unit,
                     ontologyReference=scaleOntology
                 )

@@ -17,11 +17,11 @@ class Metadata(BaseModel):
     status: list[Status]
 
 class ExternalReference(BaseModel):
-    referenceId: str|None
-    referenceSource: str|None
+    referenceId: str|None = None
+    referenceSource: str|None = None
 
 class Geometry(BaseModel):
-    coordinates: list[float|None]
+    coordinates: list[float]|None = None
     type: str
 
 class GeoCoordinates(BaseModel):
@@ -29,9 +29,9 @@ class GeoCoordinates(BaseModel):
     type: str
 
 class Season(BaseModel):
-    seasonDbId: str|None
-    seasonName: str|None
-    year: str|None
+    seasonDbId: str|None = None
+    seasonName: str|None = None
+    year: str|None = None
 
 class Observation(BaseModel):
     additionalInfo: dict|None = None
@@ -113,68 +113,68 @@ class Method(BaseModel):
     methodClass: str|None = None
     methodDbId: str|None = None
     methodName: str|None = None
-    methodPUI: str|None
-    ontologyReference: Ontology|None
+    methodPUI: str|None = None
+    ontologyReference: Ontology|None = None
 
 class ValueAnnotation(BaseModel):
-    label: str|None
-    value: str|None
+    label: str|None = None
+    value: str|None = None
 
 class ValueRange(BaseModel):
-    categories: list[ValueAnnotation]|None
-    maximumValue: str|None
-    minimumValue: str|None
+    categories: list[ValueAnnotation]|None = None
+    maximumValue: str|None = None
+    minimumValue: str|None = None
 
 class Trait(BaseModel):
-    additionalInfo: dict|None
-    alternativeAbbreviations: list[str]|None
-    attribute: str|None
-    attributePUI: str|None
-    entity: str|None
-    externalReferences: list[ExternalReference]|None
-    mainAbbreviation: str|None
-    ontologyReference: Ontology|None
-    status: str|None
-    synonyms: list[str]|None
-    traitClass: str|None
-    traitDbId: str|None
-    traitDescription: str|None
-    traitName: str|None
-    traitPUI: str|None
+    additionalInfo: dict|None = None
+    alternativeAbbreviations: list[str]|None = None
+    attribute: str|None = None
+    attributePUI: str|None = None
+    entity: str|None = None
+    externalReferences: list[ExternalReference]|None = None
+    mainAbbreviation: str|None = None
+    ontologyReference: Ontology|None = None
+    status: str|None = None
+    synonyms: list[str]|None = None
+    traitClass: str|None = None
+    traitDbId: str|None = None
+    traitDescription: str|None = None
+    traitName: str|None = None
+    traitPUI: str|None = None
 
 class Scale(BaseModel):
-    additionalInfo: dict|None
-    dataType: str|None
-    decimalPlaces: int|None
-    externalReferences: list[ExternalReference]|None
-    ontologyReference: Ontology|None
-    scaleDbId: str|None
-    scaleName: str|None
-    scalePUI: str|None
-    units: str|None
-    validValues: ValueRange|None
+    additionalInfo: dict|None = None
+    dataType: str|None = None
+    decimalPlaces: int|None = None
+    externalReferences: list[ExternalReference]|None = None
+    ontologyReference: Ontology|None = None
+    scaleDbId: str|None = None
+    scaleName: str|None = None
+    scalePUI: str|None = None
+    units: str|None = None
+    validValues: ValueRange|None = None
 
 class ObservationVariable(BaseModel):
-    additionalInfo: dict|None
-    commonCropName: str|None
-    contextOfUse: list[str]|None
-    defaultValue: str|None
-    documentationURL: str|None
-    externalReferences: list[ExternalReference]|None
-    growthStage: str|None
-    institution: str|None
-    language: str|None
-    method: Method|None
-    observationVariableDbId: str|None
-    observationVariableName: str|None
-    observationVariablePUI: str|None
-    ontologyReference: Ontology|None
-    scale: Scale|None
-    scientist: str|None
-    status: str|None
-    submissionTimestamp: str|None
-    synonyms: list[str]|None
-    trait: Trait|None
+    additionalInfo: dict|None = None
+    commonCropName: str|None = None
+    contextOfUse: list[str]|None = None
+    defaultValue: str|None = None
+    documentationURL: str|None = None
+    externalReferences: list[ExternalReference]|None = None
+    growthStage: str|None = None
+    institution: str|None = None
+    language: str|None = None
+    method: Method|None = None
+    observationVariableDbId: str|None = None
+    observationVariableName: str|None = None
+    observationVariablePUI: str|None = None
+    ontologyReference: Ontology|None = None
+    scale: Scale|None = None
+    scientist: str|None = None
+    status: str|None = None
+    submissionTimestamp: str|None = None
+    synonyms: list[str]|None = None
+    trait: Trait|None = None
 
 class Call(BaseModel):
     contentTypes: list[str]|None = None
