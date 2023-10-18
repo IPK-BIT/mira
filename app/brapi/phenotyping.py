@@ -18,7 +18,7 @@ router = APIRouter(
     prefix="/brapi/v2"
 )
 
-@router.get("/observations", response_model=responses.Response[schemas.Observation], response_model_exclude_none=True)
+@router.get("/observations", response_model=responses.Response[schemas.Observation])
 def get_observations(commons: CommonsDep, germplasmDbId: str|None = None, observationUnitDbId: str|None = None, observationVariableDbId: str|None = None):
     #TODO Check if pagination is valid (cf. request page above total page count)
     page = commons["page"] if commons["page"]!=None else 0
@@ -83,7 +83,7 @@ def get_observations(commons: CommonsDep, germplasmDbId: str|None = None, observ
         )
     )
 
-@router.get("/observationunits", response_model=responses.Response[schemas.ObservationUnit], response_model_exclude_none=True)
+@router.get("/observationunits", response_model=responses.Response[schemas.ObservationUnit])
 def get_observationunits(commons: CommonsDep):
     page = commons["page"] if commons["page"]!=None else 0
     pageSize = commons["pageSize"] if commons["pageSize"]!=None else 1000
@@ -122,7 +122,7 @@ def get_observationunits(commons: CommonsDep):
         )
     )
 
-@router.get("/variables", response_model=responses.Response[schemas.ObservationVariable], response_model_exclude_none=True)
+@router.get("/variables", response_model=responses.Response[schemas.ObservationVariable])
 def get_variables(commons: CommonsDep, observationVariableDbId: str|None = None, methodName: str|None = None, traitName: str|None = None, scaleName: str|None = None):
     page = commons["page"] if commons["page"]!=None else 0
     pageSize = commons["pageSize"] if commons["pageSize"]!=None else 1000

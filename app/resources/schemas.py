@@ -131,6 +131,7 @@ class Trait(BaseModel):
     attribute: str|None = None
     attributePUI: str|None = None
     entity: str|None = None
+    entityPUI: str|None = None
     externalReferences: list[ExternalReference]|None = None
     mainAbbreviation: str|None = None
     ontologyReference: Ontology|None = None
