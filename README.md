@@ -1,5 +1,7 @@
 # MIRA
 
+[![Documentation Status](https://readthedocs.org/projects/mira-server/badge/?version=latest)](https://mira-server.readthedocs.io/en/latest/?badge=latest)
+
 MIRA is a FastAPI application that enables access to MIAPPE-compliant ISA Tab archives by providing BrAPI endpoints.
 
 ## Installation
