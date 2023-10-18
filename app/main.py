@@ -6,9 +6,15 @@ from icecream import ic
 from brapi import phenotyping, germplasm, core, genotyping
 import dataload
 
+try:
+    pathPrefix = dataload.config['prefix']
+except:
+    pathPrefix = None
+
 app = FastAPI(
     title="Bridge MIRA",
-    description="MIRA is a FastAPI application that enables access to MIAPPE-compliant ISA Tab archives by providing BrAPI endpoints. This server loads the core1000 BRIDGE phenotyping dataset provided by https://bridge.ipk-gatersleben.de"
+    description="MIRA is a FastAPI application that enables access to MIAPPE-compliant ISA Tab archives by providing BrAPI endpoints. This server loads the core1000 BRIDGE phenotyping dataset provided by https://bridge.ipk-gatersleben.de",
+    root_path=pathPrefix
 )
 
 app.add_middleware(
