@@ -2,7 +2,7 @@
 
 [![Documentation Status](https://readthedocs.org/projects/mira-server/badge/?version=latest)](https://mira-server.readthedocs.io/en/latest/?badge=latest)
 [![Demonstrator](https://img.shields.io/badge/Demonstrator-Bridge%20core1000-blue)](https://mira.ipk-gatersleben.de)
-![License](https://img.shields.io/github/license/IPK-BIT/mira)
+[![License](https://img.shields.io/github/license/IPK-BIT/mira)](https://raw.githubusercontent.com/IPK-BIT/mira/master/LICENSE)
 
 MIRA is a FastAPI application that enables access to MIAPPE-compliant ISA Tab archives by providing BrAPI endpoints.
 
