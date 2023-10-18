@@ -1,0 +1,6 @@
+site_name: MIRA Docs
+nav:
+  - Home: index.md
+  - MIAPPE: miappe.md
+  - BrAPI: brapi.md
+theme: readthedocs

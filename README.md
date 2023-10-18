@@ -35,7 +35,7 @@ docker compose up
 
 ## Usage
 
-There is a redirection on from root to /docs were you can find a documentation of the available endpoints.
+There is a redirection on from root to /docs where you can find a documentation of the available endpoints.
 
 In the current version the following endpoints are implemented:
 - GET /observations
