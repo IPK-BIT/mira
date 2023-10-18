@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, status
 from resources import schemas, responses
 import math
 import pandas as pd
+from dateutil import parser
 
 import dataload
 
@@ -49,7 +50,8 @@ def get_observations(commons: CommonsDep, germplasmDbId: str|None = None, observ
                     except:
                         germplasmName = None
                     try: 
-                        observationTimeStamp = row["Date"]
+                        #print(row["Date"])
+                        observationTimeStamp = parser.parse(row["Date"]).strftime("%Y-%m-%dT%H:%M:%SZ")
                     except:
                         observationTimeStamp = None
                     results.append(schemas.Observation(
