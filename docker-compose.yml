@@ -4,8 +4,18 @@ services:
   bridge:
     build: ./app
     ports: 
-      - 443:443
+      - 8000:8000
     volumes:
       - ./app:/code
       - ./data:/data
       - ./config.yml:/config.yml
+  proxy:
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+      - 81:81
+    volumes:
+      - ./proxy-data:/data
+      - ./letsencrypt:/etc/letsencrypt

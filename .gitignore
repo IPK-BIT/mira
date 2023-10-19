@@ -1,7 +1,7 @@
 *.zip
 data/
-polnish/
-tmp/
 config.yml
 app/certs
 *__pychache__/
+proxy-data/
+letsencrypt/
