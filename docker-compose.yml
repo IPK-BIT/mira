@@ -19,3 +19,6 @@ services:
     volumes:
       - ./proxy-data:/data
       - ./letsencrypt:/etc/letsencrypt
+networks:
+  default:
+    name: mira
