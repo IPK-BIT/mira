@@ -5,3 +5,5 @@ app/certs
 *__pychache__/
 proxy-data/
 letsencrypt/
+*.pyc
+*.cpython*

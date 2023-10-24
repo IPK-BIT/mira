@@ -57,3 +57,11 @@ docker compose up
 
 All available endpoints of a specific MIRA Server are automatically documented and made available through ```/docs```. The root path is also redirected to the documentation.
 For a more detailed description of possible endpoints, use the official [BrAPI specifications](https://brapi.org/specification) or the [API documentation](brapi.md) provided here.
+
+## Architecture
+
+<img src="figures/MIRA-architecture.png" alt="Architecture of MIRA" width="500"/>
+
+**Figure 1**: Architecture of MIRA
+
+MIRA itself is a docker image, containing the implementation of a BrAPI server of endpoints mapping to the MIAPPE checklist and exposing ``/data`` and ``config.yml`` to mount the MIAPPE ISArchive as a dataset and the server configuration to.

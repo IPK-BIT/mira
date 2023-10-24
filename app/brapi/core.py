@@ -43,7 +43,13 @@ def get_server_info():
                     methods         = ["GET"],
                     service         = "observationunits",
                     versions        = ["2.1"]
-                )
+                ),
+                schemas.Call(
+                    contentTypes    = ["application/json"],
+                    methods         = ["GET"],
+                    service         = "germplasm",
+                    versions        = ["2.1"]
+                ),
             ],
             contactEmail        = dataload.config['contact']['mail'],
             documentationURL    = dataload.config['server']['documentation'],

@@ -1,6 +1,6 @@
-from typing import Annotated
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, status
 from resources import schemas, responses
+from brapi.parameters import CommonsDep
 import math
 import pandas as pd
 from dateutil import parser
@@ -8,11 +8,6 @@ from dateutil import parser
 import dataload
 
 from icecream import ic
-
-async def common_parameters(page: int|None = None, pageSize: int|None = None):
-    return {"page": page, "pageSize": pageSize}
-
-CommonsDep = Annotated[dict, Depends(common_parameters)]
 
 router = APIRouter(
     prefix="/brapi/v2"
@@ -101,7 +96,7 @@ def get_observationunits(commons: CommonsDep):
         results.append(schemas.ObservationUnit(
             observationUnitDbId = observationUnit["Assay Name"],
             germplasmDbId       = sample["Source Name"],
-            germplasmName       = sample["Characteristics[Infraspecific name]"],
+            germplasmName       = sample["Characteristics[Infraspecific Name]"],
             studyDbId           = dataload.miappe.investigation["Study Identifier"][0]
         ))
     
