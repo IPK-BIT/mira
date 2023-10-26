@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Request
 from resources import schemas, responses
 from brapi.parameters import CommonsDep
 import math
@@ -15,52 +15,42 @@ router = APIRouter(
 
 @router.get("/observations", response_model=responses.Response[schemas.Observation])
 def get_observations(commons: CommonsDep, germplasmDbId: str|None = None, observationUnitDbId: str|None = None, observationVariableDbId: str|None = None):
-    #TODO Check if pagination is valid (cf. request page above total page count)
     page = commons["page"] if commons["page"]!=None else 0
     pageSize = commons["pageSize"] if commons["pageSize"]!=None else 1000
-    totalCount = 0
+    results=[]
+
+    df = pd.melt(dataload.miappe.datafile, id_vars=dataload.miappe.datafile.keys()[0:3],value_vars=dataload.miappe.datafile.keys()[3:], var_name='Variable ID')
+    units = pd.merge(dataload.miappe.datafile,pd.merge(dataload.miappe.assay, dataload.miappe.study, on="Sample Name"),on="Assay Name")
+    if germplasmDbId:
+        units = units.loc[units['Source Name'].isin(germplasmDbId.split(','))]
+    if observationUnitDbId:
+        units = units.loc[units['Assay Name'].isin(observationUnitDbId.split(','))]
+    variables = dataload.miappe.traitdefinitionfile
+    if observationVariableDbId:
+        variables = variables.loc[variables['Variable ID'].isin(observationVariableDbId.split(','))]
     
-    tmp = pd.merge(dataload.miappe.datafile, pd.merge(dataload.miappe.assay, dataload.miappe.study, on="Sample Name"), on="Assay Name")
-    try:
-        observationVariableDbIds = observationVariableDbId.split(',')
-    except:
-        observationVariableDbIds = []
-    try:
-        tmp = tmp.loc[tmp["Source Name"].isin(germplasmDbId.split(','))]
-    except:
-        None
-    try:
-        tmp = tmp.loc[tmp["Assay Name"].isin(observationUnitDbId.split(','))]
-    except:
-        None
-    results = []
-    
-    for _, row in tmp.iterrows():
-        for _, trait in dataload.miappe.traitdefinitionfile.iterrows():
-            if (len(observationVariableDbIds)==0 or trait["Variable ID"] in observationVariableDbIds):
-                totalCount+=1
-                if(len(results)<pageSize and totalCount-1>=page*pageSize):
-                    try:
-                        germplasmName = row["Characteristics[Material Source ID]"]
-                    except:
-                        germplasmName = None
-                    try: 
-                        #print(row["Date"])
-                        observationTimeStamp = parser.parse(row["Date"]).strftime("%Y-%m-%dT%H:%M:%SZ")
-                    except:
-                        observationTimeStamp = None
-                    results.append(schemas.Observation(
-                        germplasmDbId           = row["Source Name"],
-                        germplasmName           = germplasmName,
-                        observationDbId         = row["Assay Name"]+"."+trait["Variable ID"],
-                        observationTimeStamp    = observationTimeStamp,
-                        observationUnitDbId     = row["Assay Name"],
-                        observationUnitName     = row["Assay Name"],
-                        observationVariableDbId = trait["Variable ID"],
-                        observationVariableName = trait["Trait"],
-                        studyDbId               = dataload.miappe.investigation["Study Identifier"][0],
-                        value                   = str(row[trait["Variable ID"]])
-                    ))
+    records = pd.merge(variables, pd.merge(df, units, on='Assay Name'), on='Variable ID').sort_values(by=['Assay Name', 'Variable ID'])
+    totalCount=len(records)
+    records = records.iloc[page*pageSize:page*pageSize+pageSize]
+
+    for _, record in records.iterrows():
+        results.append(schemas.Observation(
+                    germplasmDbId=record['Source Name'],
+                    germplasmName=record['Characteristics[''Material Source ID'']']
+                        if 'Characteristics[''Material Source ID'']' in record.keys()
+                        else None,
+                    observationDbId=record['Assay Name']+'.'+record['Variable ID'],
+                    observationTimeStamp = parser.parse(record['Date']).strftime("%Y-%m-%dT%H:%M:%SZ")
+                        if 'Date' in record.keys()
+                        else None,
+                    observationUnitDbId=record['Assay Name'],
+                    observationUnitName=record['Assay Name'],
+                    observationVariableDbId = record['Variable ID'],
+                    observationVariableName = record['Variable Name'],
+                    studyDbId=dataload.miappe.investigation['Study Identifier'][0],
+                    value=str(record['value'])
+        ))
+   
     pagination = schemas.Pagination(
         currentPage=page,
         pageSize=pageSize,
@@ -78,27 +68,42 @@ def get_observations(commons: CommonsDep, germplasmDbId: str|None = None, observ
         )
     )
 
+# @router.get('/observations/table', response_model=responses.Response[schemas.Table], deprecated=True)
+# async def get_observations_as_table():
+#     return
+
 @router.get("/observationunits", response_model=responses.Response[schemas.ObservationUnit])
-def get_observationunits(commons: CommonsDep):
+def get_observationunits(commons: CommonsDep, observationUnitDbId: str|None = None, observationUnitLevelName: str|None = None, germplasmDbId: str|None = None):
     page = commons["page"] if commons["page"]!=None else 0
     pageSize = commons["pageSize"] if commons["pageSize"]!=None else 1000
     totalCount = 0
     
     results=[]
-    for _,observationUnit in dataload.miappe.assay.iterrows():
-        totalCount+=1
-        sample = None
-        for _,studySample in dataload.miappe.study.iterrows():
-            if sample is not None:
-                break
-            if studySample["Sample Name"]==observationUnit["Sample Name"]:
-                sample=studySample
+    records = pd.merge(dataload.miappe.assay, dataload.miappe.study, on="Sample Name")
+    if observationUnitDbId:
+        records = records.loc[records['Assay Name'].isin(observationUnitDbId.split(','))]
+    if observationUnitLevelName:
+        records = records.loc[records['Characteristics[''Observation Unit Type'']'].isin(observationUnitLevelName.split(','))]
+    if germplasmDbId:
+        records = records.loc[records['Source Name'].isin(germplasmDbId.split(','))]
+    totalCount=len(records)
+    records = records.iloc[page*pageSize:page*pageSize+pageSize]
+    for _, observationUnit in records.iterrows():
         results.append(schemas.ObservationUnit(
-            observationUnitDbId = observationUnit["Assay Name"],
-            germplasmDbId       = sample["Source Name"],
-            germplasmName       = sample["Characteristics[Infraspecific Name]"],
+            observationUnitDbId = observationUnit['Assay Name'],
+            observationUnitName=observationUnit['Assay Name'],
+            germplasmDbId=observationUnit['Source Name'],
+            germplasmName=observationUnit['Source Name'],
+            observationUnitPosition=schemas.ObservationUnitPosition(
+                observationLevel=schemas.ObservationLevel(
+                    levelName=observationUnit['Characteristics[''Observation Unit Type'']']
+                        if 'Characteristics[''Observation Unit Type'']' in records.keys()
+                        else None
+                )
+            ),
             studyDbId           = dataload.miappe.investigation["Study Identifier"][0]
         ))
+
     
     pagination = schemas.Pagination(
         currentPage=page,

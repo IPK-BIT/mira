@@ -246,3 +246,170 @@ class Germplasm(BaseModel):
     subtaxaAuthority: str|None = None
     synonyms: list[Synonym]|None = None
     taxonIds: list[TaxonRef]|None = None
+
+class Contact(BaseModel):
+    contactDbId: str|None = None
+    email: str|None = None
+    instituteName: str|None = None
+    name: str|None = None
+    orcid: str|None = None
+    type: str|None = None
+
+class Dataset(BaseModel):
+    datasetPUI: str|None = None
+    license: str|None = None
+    publicReleaseDate: str|None = None
+    submissionDate: str|None = None
+
+class Publication(BaseModel):
+    publicationPUI: str|None = None
+    publicationReference: str|None = None
+
+class Trial(BaseModel):
+    active: bool|None = None
+    additionalInfo: dict|None = None
+    commonCropName: str|None = None
+    contacts: list[Contact]|None = None
+    datasetAuthorships: list[Dataset]|None = None
+    documentationURL: str|None = None
+    endDate: str|None = None
+    externalReferences: list[ExternalReference]|None = None
+    programDbId: str|None = None
+    programName: str|None = None
+    publications: list[Publication]|None = None
+    startDate: str|None = None
+    trialDbId: str|None = None
+    trialDescription: str|None = None
+    trialName: str|None = None
+    trialPUI: str|None = None
+
+class DataLink(BaseModel):
+    dataFormat: str|None = None
+    description: str|None = None
+    fileFormat: str|None = None
+    name: str|None = None
+    provenance: str|None = None
+    scientificType: str|None = None
+    url: str|None = None
+    version: str|None = None
+
+class EnvironmentalParameter(BaseModel):
+    description: str|None = None
+    parameterName: str|None = None
+    parameterPUI: str|None = None
+    unit: str|None = None
+    unitPUI: str|None = None
+    value: str|None = None
+    valuePUI: str|None = None
+
+class ExperimentalDesign(BaseModel):
+    description: str|None = None
+    PUI: str|None = None
+
+class GrowthFacility(BaseModel):
+    description: str|None = None
+    PUI: str|None = None
+
+class Timestamp(BaseModel):
+    timestamp: str|None = None
+    version: str|None = None
+
+class Study(BaseModel):
+    active: bool|None = None
+    additionalInfo: dict|None = None
+    commonCropName: str|None = None
+    contacts: list[Contact]|None = None
+    culturalPractices: str|None = None
+    dataLinks: list[DataLink]|None = None
+    documentationURL: str|None = None
+    endDate: str|None = None
+    environmentParameters: list[EnvironmentalParameter]|None = None
+    experimentalDesign: ExperimentalDesign|None = None
+    externalReferences: list[ExternalReference]|None = None
+    growthFacility: GrowthFacility|None = None
+    lastUpdate: Timestamp|None = None
+    license: str|None = None
+    locationDbId: str|None = None
+    locationName: str|None = None
+    observationLevels: list[ObservationLevel]|None = None
+    observationUnitsDescription: str|None = None
+    observationVariableDbIds: list[str]|None = None
+    seasons: list[str]|None = None
+    startDate: str|None = None
+    studyCode: str|None = None
+    studyDbId: str|None = None
+    studyDescription: str|None = None
+    studyName: str|None = None
+    studyPUI: str|None = None
+    studyType: str|None = None
+    trialDbId: str|None = None
+    trialName: str|None = None
+
+class Institute(BaseModel):
+    institueCode: str|None = None
+    instituteName: str|None = None
+
+class CollectingInstitute(Institute):
+    instituteAddress: str|None = None
+
+#Why is the location given as decimal and degrees? And why is it a string not an int?
+class CollectingSite(BaseModel):
+    coordinateUncertainty: str|None = None
+    elevation: str|None = None
+    #FIXME: correct example? WGS84 is spatialReferenceSystem, GPS is in text example for georeferencing method
+    georeferencingMethod: str|None = None
+    latitudeDecimal: str|None = None
+    latitudeDegrees: str|None = None
+    locationDescription: str|None = None
+    longitudeDecimal: str|None = None
+    longitudeDegrees: str|None = None
+    spatialReferenceSystem: str|None = None
+
+class CollectingInfo(BaseModel):
+    collectingDate: str|None = None
+    #FIXME: Why does it have an address but not breedingInstitute?
+    collectingInstitutes: list[CollectingInstitute]|None = None
+    collectingMissionIdentifier: str|None = None
+    collectingNumber: str|None = None
+    collectingSite: CollectingSite|None = None
+
+class DonorInfo(Donor):
+    donorInstitute: Institute|None = None
+
+#TODO: introduce Enums
+class GermplasmMCPD(BaseModel):
+    accessionNames: list[str]|None = None
+    accessionNumber: str|None = None
+    acquisitionDate: str|None = None
+    acquisitionSourceCode: str|None = None
+    #FIXME: should be alternateIds to comply with BrAPI naming scheme
+    alternateIDs: list[str]|None = None
+    ancestralData: str|None = None
+    biologicalStatusOfAccessionCode: str|None = None
+    breedingInstitutes: list[Institute]|None = None
+    collectingInfo: CollectingInfo
+    commonCropName: str|None = None
+    countryOfOrigin: str|None = None
+    donorInfo: DonorInfo|None = None
+    genus: str|None
+    germplasmDbId: str|None = None
+    germplasmPUI: str|None = None
+    instituteCode: str|None = None
+    mlsStatus: str|None = None
+    remarks: str|None = None
+    safetyDuplicateInstitutes: list[Institute]|None = None
+    species: str|None = None
+    speciesAuthority: str|None = None
+    storageTypeCodes: list[str]|None = None
+    subtaxon: str|None = None
+    subtaxonAuthority: str|None = None
+
+class ObservationVariableReference(BaseModel):
+    observationVariableDbId: str|None = None
+    observationVariableName: str|None = None
+
+#TODO: add enum for header
+class Table(BaseModel):
+    data: list[list[str]]
+    headerRow: list[str]
+    observationVariables: list[ObservationVariableReference]
