@@ -20,7 +20,7 @@ def get_observations(commons: CommonsDep, germplasmDbId: str|None = None, observ
     results=[]
 
     df = pd.melt(dataload.miappe.datafile, id_vars=dataload.miappe.datafile.keys()[0:3],value_vars=dataload.miappe.datafile.keys()[3:], var_name='Variable ID')
-    units = pd.merge(dataload.miappe.datafile,pd.merge(dataload.miappe.assay, dataload.miappe.study, on="Sample Name"),on="Assay Name")
+    units = pd.merge(dataload.miappe.assay, dataload.miappe.study, on="Sample Name")
     if germplasmDbId:
         units = units.loc[units['Source Name'].isin(germplasmDbId.split(','))]
     if observationUnitDbId:
@@ -122,7 +122,7 @@ def get_observationunits(commons: CommonsDep, observationUnitDbId: str|None = No
         )
     )
 
-@router.get("/variables", response_model=responses.Response[schemas.ObservationVariable])
+@router.get("/variables2", response_model=responses.Response[schemas.ObservationVariable])
 def get_variables(commons: CommonsDep, observationVariableDbId: str|None = None, methodName: str|None = None, traitName: str|None = None, scaleName: str|None = None):
     page = commons["page"] if commons["page"]!=None else 0
     pageSize = commons["pageSize"] if commons["pageSize"]!=None else 1000
@@ -183,7 +183,7 @@ def get_variables(commons: CommonsDep, observationVariableDbId: str|None = None,
 
         valueRange = None
         unit = None
-        if trait["Scale Type"] in ['nominal', 'ordinal']:
+        if trait["Scale Type"] in ['Nominal', 'Ordinal']:
             valueRange = schemas.ValueRange(
                 categories=[]
             )
@@ -193,7 +193,7 @@ def get_variables(commons: CommonsDep, observationVariableDbId: str|None = None,
                     label=annotation[1][1:-1],
                     value=annotation[0]
                 ))
-        elif trait["Scale Type"] in ["numerical"]:
+        elif trait["Scale Type"] in ["Numerical"]:
             unit = trait["Method Description"]
 
         totalCount+=1
@@ -216,6 +216,103 @@ def get_variables(commons: CommonsDep, observationVariableDbId: str|None = None,
                     ontologyReference=scaleOntology
                 )
             ))
+    pagination = schemas.Pagination(
+        currentPage=page,
+        pageSize=pageSize,
+        totalCount=totalCount,
+        totalPages=math.ceil(totalCount/pageSize)
+    )
+    return responses.Response(
+        metadata=schemas.Metadata(
+            datafiles=[],
+            pagination=pagination,
+            status=[schemas.Status(message="Request accepted, response successful", messageType="INFO")]
+        ),
+        result=responses.Result(
+            data=results
+        )
+    )
+
+@router.get("/variables", response_model=responses.Response[schemas.ObservationVariable])
+def get_variables(commons: CommonsDep, observationVariableDbId: str|None = None, methodName: str|None = None, traitName: str|None = None, scaleName: str|None = None):
+    page = commons["page"] if commons["page"]!=None else 0
+    pageSize = commons["pageSize"] if commons["pageSize"]!=None else 1000
+    
+    records = dataload.miappe.traitdefinitionfile
+    if observationVariableDbId:
+        records = records.loc[records['Variable ID'].isin(observationVariableDbId.split(','))]
+    if methodName:
+        records = records.loc[records['Method'].isin(methodName.split(','))]
+    if traitName:
+        records = records.loc[records['Trait'].isin(traitName.split(','))]
+    if scaleName:
+        records = records.loc[records['Scale'].isin(scaleName.split(','))]
+    totalCount=len(records)
+    records = records.iloc[page*pageSize:page*pageSize+pageSize]
+
+    results=[]
+    for _, record in records.iterrows():
+        try:
+            traitOntology = schemas.Ontology(
+                ontologyDbId=record["Trait Source REF"],
+                documentationLinks=[schemas.OntologyAnnotation(
+                    URL=record["Trait Accession Number"]
+                )]
+            )
+        except:
+            traitOntology = None
+        try:
+            methodOntology = schemas.Ontology(
+                ontologyDbId=record["Method Source REF"],
+                documentationLinks=[schemas.OntologyAnnotation(
+                    URL=record["Method Accession Number"]
+                )]
+            )
+        except:
+            methodOntology = None
+        try:
+            scaleOntology = schemas.Ontology(
+                ontologyDbId=record["Scale Source REF"],
+                documentationLinks=[schemas.OntologyAnnotation(
+                    URL=record["Scale Accession Number"]
+                )]
+            )
+        except:
+            scaleOntology = None
+
+        valueRange = None
+        unit = None
+        if record["Scale Type"] in ['Nominal', 'Ordinal']:
+            valueRange = schemas.ValueRange(
+                categories=[]
+            )
+            for value in record["Method Description"].split(','):
+                annotation = value.split(':')
+                valueRange.categories.append(schemas.ValueAnnotation(
+                    label=annotation[1][1:-1],
+                    value=annotation[0]
+                ))
+        elif record["Scale Type"] in ["Numerical"]:
+            unit = record["Method Description"]
+
+        results.append(schemas.ObservationVariable(
+            observationVariableDbId=record["Variable ID"],
+            method=schemas.Method(
+                methodName=record["Method"],
+                ontologyReference=methodOntology
+            ),
+            trait=schemas.Trait(
+                traitName=record["Trait"],
+                ontologyReference=traitOntology
+            ),
+            scale=schemas.Scale(
+                scaleName=record["Scale"] if type(record["Scale"])==str else None,
+                validValues=valueRange,
+                dataType=record["Scale Type"] if type(record["Scale Type"])==str else None,
+                units=unit,
+                ontologyReference=scaleOntology
+            )
+        ))
     pagination = schemas.Pagination(
         currentPage=page,
         pageSize=pageSize,

@@ -21,7 +21,7 @@ class MIAPPE:
                      self.investigation[tmp[0]] = tmp[1:]
         self.study                  = pd.read_csv(os.path.join(directorypath, studyname), delimiter='\t')
         self.assay                  = pd.read_csv(os.path.join(directorypath, assayname), delimiter='\t')
-        self.datafile               = pd.read_csv(os.path.join(directorypath, dataname ), delimiter="\t")
+        self.datafile               = pd.read_csv(os.path.join(directorypath, dataname ), delimiter="\t", dtype=str)
         self.traitdefinitionfile    = pd.read_csv(os.path.join(directorypath, traitname), delimiter="\t")
 
 def read_miappe(directorypath: str):
