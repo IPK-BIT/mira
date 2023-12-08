@@ -35,20 +35,20 @@ def get_observations(commons: CommonsDep, germplasmDbId: str|None = None, observ
 
     for _, record in records.iterrows():
         results.append(schemas.Observation(
-                    germplasmDbId=record['Source Name'],
-                    germplasmName=record['Characteristics[''Material Source ID'']']
-                        if 'Characteristics[''Material Source ID'']' in record.keys()
-                        else None,
-                    observationDbId=record['Assay Name']+'.'+record['Variable ID'],
-                    observationTimeStamp = parser.parse(record['Date']).strftime("%Y-%m-%dT%H:%M:%SZ")
-                        if 'Date' in record.keys()
-                        else None,
-                    observationUnitDbId=record['Assay Name'],
-                    observationUnitName=record['Assay Name'],
-                    observationVariableDbId = record['Variable ID'],
-                    observationVariableName = record['Variable Name'],
-                    studyDbId=dataload.miappe.investigation['Study Identifier'][0],
-                    value=str(record['value'])
+            germplasmDbId=record['Source Name'],
+            germplasmName=record['Characteristics[''Material Source ID'']']
+                if 'Characteristics[''Material Source ID'']' in record.keys()
+                else None,
+            observationDbId=record['Assay Name']+'.'+record['Variable ID'],
+            observationTimeStamp = parser.parse(record['Date']).strftime("%Y-%m-%dT%H:%M:%SZ")
+                if 'Date' in record.keys()
+                else None,
+            observationUnitDbId=record['Assay Name'],
+            observationUnitName=record['Assay Name'],
+            observationVariableDbId = record['Variable ID'],
+            observationVariableName = record['Variable Name'],
+            studyDbId=dataload.miappe.investigation['Study Identifier'][0],
+            value=str(record['value'])
         ))
    
     pagination = schemas.Pagination(
@@ -68,9 +68,62 @@ def get_observations(commons: CommonsDep, germplasmDbId: str|None = None, observ
         )
     )
 
-# @router.get('/observations/table', response_model=responses.Response[schemas.Table], deprecated=True)
-# async def get_observations_as_table():
-#     return
+@router.get('/observations/table', response_model=responses.Response[schemas.Table])
+async def get_observations_as_table(commons: CommonsDep):
+    page = commons["page"] if commons["page"]!=None else 0
+    pageSize = commons["pageSize"] if commons["pageSize"]!=None else 1000
+    totalCount = 0
+
+    df = pd.merge(pd.merge(dataload.miappe.study, dataload.miappe.assay, on="Sample Name"), dataload.miappe.datafile, on="Assay Name")
+    # print(df)
+
+    totalCount=len(df)
+    results=[]
+    records = df.iloc[page*pageSize:page*pageSize+pageSize]
+    date_index = df.columns.get_loc('Date')
+    for _, record in records.iterrows():
+        results.append([
+            record['Date'],
+            record['Assay Name'],
+            record['Assay Name'],
+            record['Source Name'],
+            record['Source Name'],
+        ])
+        print(record[date_index+1:])
+        for value in record[date_index+1:]:
+            results[-1].append(str(value))
+    traits = dataload.miappe.traitdefinitionfile[['Variable ID', 'Variable Name']]
+    observationVariables = []
+    for _, trait in traits.iterrows():
+        observationVariables.append(schemas.ObservationVariableReference(
+            observationVariableDbId=trait['Variable ID'],
+            observationVariableName=trait['Variable Name']
+        ))
+
+    pagination = schemas.Pagination(
+        currentPage=page,
+        pageSize=pageSize,
+        totalCount=totalCount,
+        totalPages=math.ceil(totalCount/pageSize)
+    )
+    return responses.Response(
+        metadata=schemas.Metadata(
+            datafiles=[],
+            pagination=pagination,
+            status=[schemas.Status(message="Request accepted, response successful", messageType="INFO")]
+        ),
+        result=schemas.Table(
+            data=results,
+            headerRow=[
+                "observationTimeStamp",
+                "observationUnitDbId",
+                "observationUnitName",
+                "germplasmDbId",
+                "germplasmName"
+            ],
+            observationVariables=observationVariables
+        )
+    )
 
 @router.get("/observationunits", response_model=responses.Response[schemas.ObservationUnit])
 def get_observationunits(commons: CommonsDep, observationUnitDbId: str|None = None, observationUnitLevelName: str|None = None, germplasmDbId: str|None = None):
@@ -105,117 +158,6 @@ def get_observationunits(commons: CommonsDep, observationUnitDbId: str|None = No
         ))
 
     
-    pagination = schemas.Pagination(
-        currentPage=page,
-        pageSize=pageSize,
-        totalCount=totalCount,
-        totalPages=math.ceil(totalCount/pageSize)
-    )
-    return responses.Response(
-        metadata=schemas.Metadata(
-            datafiles=[],
-            pagination=pagination,
-            status=[schemas.Status(message="Request accepted, response successful", messageType="INFO")]
-        ),
-        result=responses.Result(
-            data=results
-        )
-    )
-
-@router.get("/variables2", response_model=responses.Response[schemas.ObservationVariable])
-def get_variables(commons: CommonsDep, observationVariableDbId: str|None = None, methodName: str|None = None, traitName: str|None = None, scaleName: str|None = None):
-    page = commons["page"] if commons["page"]!=None else 0
-    pageSize = commons["pageSize"] if commons["pageSize"]!=None else 1000
-    totalCount = 0
-    try:
-        observationVariableDbIds = observationVariableDbId.split(',')
-    except:
-        observationVariableDbIds = []
-    try:
-        methodNames = methodName.split(',')
-    except:
-        methodNames = []
-    try:
-        traitNames = traitName.split(',')
-    except:
-        traitNames = []
-    try:
-        scaleNames = scaleName.split(',')
-    except:
-        scaleNames = []
-    results=[]
-    for _, trait in dataload.miappe.traitdefinitionfile.iterrows():
-        if len(observationVariableDbIds)>0 and trait["Variable ID"] not in observationVariableDbIds:
-            break
-        if len(methodNames)>0 and trait["Method"] not in methodNames:
-            break
-        if len(traitNames)>0 and trait["Trait"] not in traitNames:
-            break
-        if len(scaleNames)>0 and trait["Scale"] not in scaleNames:
-            break
-        try:
-            traitOntology = schemas.Ontology(
-                ontologyDbId=trait["Trait Source REF"],
-                documentationLinks=[schemas.OntologyAnnotation(
-                    URL=trait["Trait Accession Number"]
-                )]
-            )
-        except:
-            traitOntology = None
-        try:
-            methodOntology = schemas.Ontology(
-                ontologyDbId=trait["Method Source REF"],
-                documentationLinks=[schemas.OntologyAnnotation(
-                    URL=trait["Method Accession Number"]
-                )]
-            )
-        except:
-            methodOntology = None
-        try:
-            scaleOntology = schemas.Ontology(
-                ontologyDbId=trait["Scale Source REF"],
-                documentationLinks=[schemas.OntologyAnnotation(
-                    URL=trait["Scale Accession Number"]
-                )]
-            )
-        except:
-            scaleOntology = None
-
-        valueRange = None
-        unit = None
-        if trait["Scale Type"] in ['Nominal', 'Ordinal']:
-            valueRange = schemas.ValueRange(
-                categories=[]
-            )
-            for value in trait["Method Description"].split(','):
-                annotation = value.split(':')
-                valueRange.categories.append(schemas.ValueAnnotation(
-                    label=annotation[1][1:-1],
-                    value=annotation[0]
-                ))
-        elif trait["Scale Type"] in ["Numerical"]:
-            unit = trait["Method Description"]
-
-        totalCount+=1
-        if(len(results)<pageSize and totalCount-1>=page*pageSize):
-            results.append(schemas.ObservationVariable(
-                observationVariableDbId=trait["Variable ID"],
-                method=schemas.Method(
-                    methodName=trait["Method"],
-                    ontologyReference=methodOntology
-                ),
-                trait=schemas.Trait(
-                    traitName=trait["Trait"],
-                    ontologyReference=traitOntology
-                ),
-                scale=schemas.Scale(
-                    scaleName=trait["Scale"] if type(trait["Scale"])==str else None,
-                    validValues=valueRange,
-                    dataType=trait["Scale Type"] if type(trait["Scale Type"])==str else None,
-                    units=unit,
-                    ontologyReference=scaleOntology
-                )
-            ))
     pagination = schemas.Pagination(
         currentPage=page,
         pageSize=pageSize,

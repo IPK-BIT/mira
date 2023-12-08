@@ -14,7 +14,7 @@ class Result(BaseModel, Generic[T]):
 
 class Response(BaseModel, Generic[T]):
     metadata: schemas.Metadata
-    result: Result[T]
+    result: Result[T]|schemas.Table
 
 class SingleResponse(BaseModel, Generic[T]):
     metadata: schemas.Metadata
