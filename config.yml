@@ -1,0 +1,6 @@
+format: 'arc' # 'isa-tab' or 'isa-json' or 'arc'
+data: 'data/rocrate/'
+aai:
+  - method: basic
+    username: 'demo'
+    password: 'demo'

@@ -1,5 +1,0 @@
-fastapi[all]
-uvicorn
-pandas==2.1.0
-icecream
-pyyaml==6.0.1

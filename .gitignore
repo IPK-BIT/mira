@@ -1,9 +1,9 @@
-*.zip
 data/
-config.yml
-app/certs
-*__pychache__/
-proxy-data/
-letsencrypt/
-*.pyc
-*.cpython*
+rocrate/
+
+*.sqlite
+*.db
+
+__pycache__/
+
+tmp/
