@@ -12,13 +12,17 @@ class GermplasmController(Controller):
     path="/germplasm"
 
     @get('/')
-    async def get_all_germplasm(self, transaction: AsyncSession, page: int|None = None, pageSize: int|None = None) -> response.Response[Germplasm]: 
+    async def get_all_germplasm(self, transaction: AsyncSession, page: int|None = None, pageSize: int|None = None, germplasmDbId: str|None = None, germplasmName: str|None = None ) -> response.Response[Germplasm]: 
         if not page:
             page = 0
         if not pageSize:
             pageSize = 1000
         
         query = select(DbGermplasm)
+        if germplasmDbId:
+            query = query.where(DbGermplasm.germplasmDbId == germplasmDbId)
+        if germplasmName:
+            query = query.where(DbGermplasm.germplasmName == germplasmName)
         query_results = (await transaction.execute(query)).scalars().all()
         total_count = len(query_results)
         
@@ -29,6 +33,7 @@ class GermplasmController(Controller):
             results.append(Germplasm(
                 germplasmDbId=g.germplasmDbId,
                 germplasmPUI=g.germplasmPUI,
+                germplasmOrigin=g.germplasmOrigin,
                 genus=g.genus,
                 species=g.species,
                 subtaxa=g.subtaxa,

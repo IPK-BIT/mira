@@ -1,5 +1,5 @@
 format: 'arc' # 'isa-tab' or 'isa-json' or 'arc'
-data: 'data/rocrate/'
+data: 'data/shape/'
 aai:
   - method: basic
     username: 'demo'

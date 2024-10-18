@@ -1,3 +1,5 @@
+from icecream import ic
+
 import json
 
 from db.models import models
@@ -6,6 +8,7 @@ from db.schemas import core
 from sqlalchemy.orm import Session
 
 def load_trial(db: Session, isa_json):
+    ic(isa_json)
     trial = models.Trial(
         additionalInfo = {
             'MIAPPE-Version': next((comment['value'] for comment in isa_json['comments'] if comment['name'] == 'MIAPPE version'), None),

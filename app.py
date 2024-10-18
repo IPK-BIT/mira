@@ -1,3 +1,5 @@
+from icecream import ic
+
 import os
 import yaml
 
@@ -43,7 +45,9 @@ async def exit():
 
 cors_config = CORSConfig(
     allow_origins=['*'],
-    allow_methods=['GET']
+    allow_methods=['GET'],
+    allow_headers=['*'],
+    allow_credentials=True,
 )
 
 
@@ -60,7 +64,7 @@ async def server_info() -> dict:
             },
             "status": [
             {
-                "message": "Request accepted, response successful",
+                "message": "Success",
                 "messageType": "INFO"
             }
             ]
@@ -245,6 +249,9 @@ if config.get('aai', False):
     def basic_auth_factory(app:ASGIApp)->ASGIApp:
         async def basic_auth(scope:Scope, receive:Receive, send:Send):
             if scope['type'] == 'http':
+                if scope['method'] == 'OPTIONS':
+                    await app(scope, receive, send)
+                    return
                 headers = dict(scope['headers'])
                 if headers.get(b'authorization', b'') != b'Basic ' + token:
                     await send({
@@ -262,7 +269,6 @@ if config.get('aai', False):
             await app(scope, receive, send)
         return basic_auth
     middlewares.append(basic_auth_factory)
-
 
 app = Litestar(
     route_handlers=[server_info, CoreRouter, GermplasmRouter, PhenotypingRouter],

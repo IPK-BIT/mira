@@ -11,6 +11,7 @@ def load_variables(db: Session, filename: str):
         trait = phenotyping.Trait(
             traitDbId=t['Trait'],
             traitPUI=t['Trait Accession Number'],
+            traitClass=t['Trait Class'] if t['Trait Class'] else None,
         )
         method = phenotyping.Method(
             methodDbId=t['Method'],

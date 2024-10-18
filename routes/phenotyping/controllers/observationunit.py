@@ -11,12 +11,14 @@ class ObservationUnitController(Controller):
     path = '/observationunits'
     
     @get('/')
-    async def get_all_observationunits(self, transaction: AsyncSession, page: int|None = None, pageSize: int|None = None) -> response.Response[ObservationUnit]:
+    async def get_all_observationunits(self, transaction: AsyncSession, page: int|None = None, pageSize: int|None = None, germplasmDbId: str|None = None) -> response.Response[ObservationUnit]:
         if not page:
             page = 0
         if not pageSize:
             pageSize = 1000
         query = select(DbObservationUnit)
+        if germplasmDbId:
+            query = query.where(DbObservationUnit.germplasmDbId == germplasmDbId)
         query_results = (await transaction.execute(query)).scalars().all()
         total_count = len(query_results)
         query = query.offset(page * pageSize).limit(pageSize)
