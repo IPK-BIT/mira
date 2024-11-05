@@ -1,3 +1,5 @@
+from icecream import ic
+
 import json
 import os
 from arctrl.arctrl import JsonController
@@ -34,12 +36,16 @@ def transform_and_load(data: ARC, data_dir: str = DATA_DIR):
         for input in growth_process['inputs']:
             load_germplasm(db, input, None)
         for i in range(0, len(growth_process['outputs'])):
+            try:
+                study_title = s['title']
+            except KeyError:
+                study_title = s['identifier']
             output = growth_process['outputs'][i]
             context = {
                 'trialDbId': isa_json['identifier'],
                 'trialName': isa_json['title'],
                 'studyDbId': s['identifier'],
-                'studyName': s['title'],
+                'studyName': study_title,
                 'germplasmDbId': growth_process['inputs'][i]['name']
             }
             load_observationUnit(db, output, context)
@@ -51,6 +57,6 @@ def transform_and_load(data: ARC, data_dir: str = DATA_DIR):
                 if process['name'] == 'Phenotyping':
                     data_files = [x for i, x in enumerate(process['outputs']) if x['name'] not in [y['name'] for y in process['outputs'][:i]]]
                     for data_file in data_files:
-                        load_observations(db, os.path.join(data_dir, os.path.dirname(a['filename']), 'datasets', data_file['name']), context={"study": s, "assay": a})
+                        load_observations(db, os.path.join(data_dir, os.path.dirname(a['filename']), 'dataset', data_file['name']), context={"study": s, "assay": a})
 
     db.close()

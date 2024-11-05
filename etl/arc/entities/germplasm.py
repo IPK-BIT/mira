@@ -1,3 +1,4 @@
+from icecream import ic
 from db.models import models
 from sqlalchemy.orm import Session
 
@@ -15,7 +16,7 @@ def load_germplasm(db: Session, g, context):
             genus = characteristic['value']['annotationValue']
         elif characteristic['category']['characteristicType']['annotationValue'] == 'Species':
             species = characteristic['value']['annotationValue']
-        elif characteristic['category']['characteristicType']['annotationValue'] == 'Infraspecific Name':
+        elif characteristic['category']['characteristicType']['annotationValue'] == 'Infraspecific name':
             subtaxa = characteristic['value']['annotationValue']
         elif characteristic['category']['characteristicType']['annotationValue'] == 'Material source description':
             seedSourceDescription = characteristic['value']['annotationValue']

@@ -2,9 +2,13 @@ from db.models import models
 from sqlalchemy.orm import Session
 
 def load_study(db: Session, s, isa_json):
+    try:
+        title = s['title']
+    except KeyError:
+        title = s['identifier']
     study = models.Study(
             studyDbId = s['identifier'],
-            studyName = s['title'],
+            studyName = title,
             # TODO: add remaining properties
             # studyDescription='',
             # startDate='',

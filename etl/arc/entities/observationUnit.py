@@ -9,5 +9,6 @@ def load_observationUnit(db: Session, o, context):
         trialDbId=context['trialDbId'],
         trialName=context['trialName'],
     )
-    db.add(observationUnit)
-    db.commit()
+    if db.get(models.ObservationUnit, o['name']) is None:
+        db.add(observationUnit)
+        db.commit()

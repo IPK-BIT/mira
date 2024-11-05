@@ -1,3 +1,5 @@
+from icecream import ic
+
 import json
 import polars as pl
 from sqlalchemy.orm import Session
@@ -44,5 +46,6 @@ def load_variables(db: Session, filename: str):
             method=json.dumps(method.model_dump()),
             scale=scale.model_dump(),
         )
-        db.add(variable)
-    db.commit()
+        if not db.get(ObservationVariable, variable.observationVariableDbId):
+            db.add(variable)
+    db.commit() 

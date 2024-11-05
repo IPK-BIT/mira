@@ -14,6 +14,11 @@ def load_observations(db: Session, filename, context):
         for idx in range(0, len(context['study']['processSequence'][0]['outputs'])):
             if context['study']['processSequence'][0]['outputs'][idx]['name'] == o['Assay Name']:
                 germplasmDbId = context['study']['processSequence'][0]['inputs'][idx]['name']
+        
+        try:
+            study_title = context['study']['title']
+        except KeyError:
+            study_title = context['study']['identifier']
         observation = Observation(
             germplasmDbId=germplasmDbId,
             observationDbId=o['Assay Name']+'-'+o['Trait']+'-'+parse(o['Date']).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -21,7 +26,7 @@ def load_observations(db: Session, filename, context):
             observationTimeStamp=parse(o['Date']).strftime("%Y-%m-%dT%H:%M:%SZ"),
             observationVariableDbId=o['Trait'],
             studyDbId=context['study']['identifier'],
-            studyName=context['study']['title'],
+            studyName=study_title,
             value=str(o['Value'])
         )
         db.add(observation)
