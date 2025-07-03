@@ -1,6 +1,46 @@
-site_name: MIRA Docs
+site_name: MIRA Documentation
+site_url: https://mira-server.rtfd.io
+repo_url: https://github.com/IPK-BIT/mira
+repo_name: MIRA
+repo_type: github
+repo_branch: master
 nav:
-  - Home: index.md
-  - MIAPPE: miappe.md
-  - BrAPI: brapi.md
-theme: readthedocs
+  - Getting Started:
+    - index.md
+  - API Reference:
+    - api-reference/index.md
+    - api-reference/core.md
+    - api-reference/germplasm.md
+    - api-reference/phenotyping.md
+  - ARC Prerequisites:
+    - arc-prerequisites/index.md
+theme:
+  name: material
+  favicon: assets/mira-icon.png
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    primary: green
+    accent: lime
+  features:
+    - navigation.indexes 
+    - content.code.copy
+    - content.tooltips
+markdown_extensions:
+  - tables
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+  - pymdownx.blocks.caption
+  - abbr
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
+watch:
+  - includes

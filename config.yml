@@ -1,6 +1,16 @@
-format: 'arc' # 'isa-tab' or 'isa-json' or 'arc'
-data: 'data/shape/'
+format: 'arc'
+data: '/mnt/vcf-storage/bridge-core1000'
 aai:
   - method: basic
-    username: 'demo'
-    password: 'demo'
+    username: demo
+    password: demo
+server:
+  contact: feser@ipk-gatersleben.de
+  documentation: https://mira-server.rtfd.io/
+  location: Germany
+  organization: 
+    name: IPK Gatersleben
+    url: https://leibniz-ipk.de/
+  description: |
+    The MIRA server is a web service for the dissemination of plant phenotyping data using the Breeding API (BrAPI) standard.
+  name: BRIDGE MIRA

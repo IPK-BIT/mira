@@ -1,67 +1,106 @@
-# MIRA - Enabling Access to MIAPPE compliant ISArchives through BrAPI
+# Getting Started
 
-## Use Case
-Phenotyping datasets are often available as [MIAPPE](https://www.miappe.org/) compliant [ISA Tab](https://isa-specs.readthedocs.io/en/latest/isatab.html) in repositories. However, the programmatic use of those datasets is limited. To enable access to such data products, MIRA is transforming them and provides [BrAPI](https://brapi.org/) endpoints accordingly. This allows developers to use the data products in their applications. In a demonstrator [DivBrowse](https://divbrowse.ipk-gatersleben.de) utilizes the [BRIDGE core1000 dataset](https://bridge.ipk-gatersleben.de/) to color results of a dimensionality reduction of genotypic data by phenotypic observations results.
+## What is MIRA?
 
-## Installation
+MIRA is a mediation service that allows to access research data stored in a FDO in form of an ARC, according to the recommendations of the MIAPPE standard via BrAPI endpoints. For this purpose, the ARC RO-Crate and the associated resources of the ARC are extracted and automatically transformed via an ISA-MIAPPE-BrAPI mapping so that they can be loaded from a BrAPI server.
 
-First, clone the repository to your local machine.
+<figure markdown="span">
+![MIRA Architecture](assets/mira-arch.png)
+  <figcaption>Architecture overview of MIRA.</figcaption>
+</figure>
 
+## Usage Guide
+
+Before MIRA can be used, it should be checked whether the ARC fulfills all the requirements to be loaded successfully. All prerequisites are listed on the [ARC Prerequisites](arc-prerequisites) page. A subsequent FAQ collection provides starting points for solving issues.
+
+### Docker Setup
+
+**Prerequisites**
+
+- Docker>=27
+- Docker compose>=2.28
+
+**Configure docker compose setup**
+```yml linenums="1" title="docker-compose.yml"
+services:
+  mira:
+    image: ghcr.io/ipk-bit/mira:latest
+    ports:
+      - 8000:8000
+    volumes:
+      - ./config.yml:/app/config.yml
 ```
+
+**Configure instance**
+
+```yml linenums="1" title="./config.yml"
+format: 'arc'
+data: <path-to-local-repo>
+aai:
+  - method: basic
+    username: <username>
+    password: <password>
+server:
+  contact: <contact-email>
+  documentation: <documentation-url>
+  location: <country>
+  organization: 
+    name: <organization-name>
+    url: <organization-website>
+  description: |
+    <server-description>
+  name: <server-name>
+```
+
+**Start container**
+```bash
+docker compose up -d
+```
+
+### From Source
+
+**Prerequisities**
+
+- Python>=3.12
+- Poetry>=1.8
+
+**Clone Repository**
+```bash
 git clone https://github.com/IPK-BIT/mira.git
 ```
 
-After that, several additional resources have to be provided, in order for MIRA to run. 
-
-### MIAPPE ISArchive
-
-MIRA uses MIAPPE compliant ISA Tab archives as primary input. Those MIAPPE ISArchives are made available by placing the ``data/`` directory next to the ``docker-compose.yml``. A [mapping](miappe.md) of MIAPPE to ISA Tab and BrAPI is provided with this documentation. For the current version of MIRA, only ISArchives with one study and one assay are valid input.
-
-### Configuration File
-
-A configuration file ``config.yml`` is needed to configure server information and activate or deactivate modules not required. The configuration file needs also to be placed next to the ``docker-compose.yml``. An example configuration file is provided:
-
-```
-server:
-  name: 'MIRA Testserver'
-  description: 'Some description for your new MIRA server'
-  documentation: 'http://<your info>/docs'
-  requireAuthorization: false
-contact:
-  organization:
-    name: 'Your Organization'
-    url: 'https://organization.org'
-    location: 'Country'
-  mail: 'mail@example.com'
-module:
-  enableCore: true
-  enablePhenotyping: true
-  enableGenotyping: false
-  enableGermplasm: false
-```
-
-### Running with HTTPS 
-
-For running with HTTPS, the certificate and private key need to be copied into the ``/app`` directory. 
-For testing locally, it's possible to use [mkcert](https://github.com/FiloSottile/mkcert) to generate valid certificate and private key files. 
-
-### Starting the MIRA Server
-
-Use docker compose to install the application.
-
+**Install Dependencies**
 ```bash
-docker compose up
+poetry install
 ```
 
-## Usage
+**Configure instance**
 
-All available endpoints of a specific MIRA Server are automatically documented and made available through ```/docs```. The root path is also redirected to the documentation.
-For a more detailed description of possible endpoints, use the official [BrAPI specifications](https://brapi.org/specification) or the [API documentation](brapi.md) provided here.
+```yml linenums="1" title="./config.yml"
+format: 'arc'
+data: <path-to-local-repo>
+aai:
+  - method: basic
+    username: <username>
+    password: <password>
+server:
+  contact: <contact-email>
+  documentation: <documentation-url>
+  location: <country>
+  organization: 
+    name: <organization-name>
+    url: <organization-website>
+  description: |
+    <server-description>
+  name: <server-name>
+```
 
-## Architecture
+**Start MIRA server**
+```bash
+cd mira
+litestar run 
+```
 
-<img src="figures/MIRA-architecture.png" alt="Architecture of MIRA" width="500"/>
+## How to Cite
 
-**Figure 1**: Architecture of MIRA
-
-MIRA itself is a docker image, containing the implementation of a BrAPI server of endpoints mapping to the MIAPPE checklist and exposing ``/data`` and ``config.yml`` to mount the MIAPPE ISArchive as a dataset and the server configuration to.
+- Feser, M. MIRA [Computer Software]. [https://github.com/IPK-BIT/mira](https://github.com/IPK-BIT/mira)

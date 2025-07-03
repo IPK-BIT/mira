@@ -1,9 +1,6 @@
-data/
-rocrate/
-
 *.sqlite
 *.db
 
 __pycache__/
 
-tmp/
+config.yml

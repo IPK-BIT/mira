@@ -11,13 +11,12 @@ authors:
   - given-names: Manuel
     family-names: Feser
     email: feser@ipk-gatersleben.de
-    name-particle: Manuel
     affiliation: IPK Gatersleben
     orcid: 'https://orcid.org/0000-0001-6546-1818'
 repository-code: 'https://github.com/IPK-BIT/mira'
 url: 'https://mira.ipk-gatersleben.de'
 abstract: >-
-  Enabling Access to MIAPPE-compliant ISA Tab archives
+  Enabling Access to MIAPPE-compliant ISA archives
   through BrAPI
 keywords:
   - BrAPI
