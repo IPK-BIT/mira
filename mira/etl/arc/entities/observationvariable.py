@@ -5,12 +5,8 @@ from sqlalchemy.orm import Session
 from db.models.models import ObservationVariable
 from db.schemas import phenotyping
 
-def load_variables(db: Session, filename: str):
-    if filename.endswith('.csv'):
-        traits = pl.read_csv(filename)
-    else:
-        traits = pl.read_csv(filename, separator='\t')
-    for t in traits.iter_rows(named=True):
+def load_variables(db: Session, df: pl.DataFrame):
+    for t in df.iter_rows(named=True):
         trait = phenotyping.Trait(
             traitDbId=t['Trait'],
             traitPUI=t['Trait Accession Number'],

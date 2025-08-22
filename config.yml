@@ -1,5 +1,5 @@
 format: 'arc'
-data: '/mnt/vcf-storage/bridge-core1000'
+data: 'https://git.nfdi4plants.org/shape/shape'
 aai:
   - method: basic
     username: demo

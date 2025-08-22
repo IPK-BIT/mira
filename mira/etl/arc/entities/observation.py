@@ -4,15 +4,13 @@ from dateutil.parser import parse
 
 from db.models import models
 
-def load_observations(db: Session, filename, process_id, graph):
-    if filename.endswith('.csv'):
-        df = pl.read_csv(filename)
-    else:
-        df = pl.read_csv(filename, separator='\t')
+def load_observations(db: Session, df: pl.DataFrame, process_id, graph):
     df = df.filter(pl.col("Assay Name") == graph[graph[process_id]['object']['@id']]['name'])
 
     for obs in df.iter_rows(named=True):
         db_variable=db.get(models.ObservationVariable, obs['Trait'])
+        if not db_variable:
+            print(obs['Trait'])
         db_observationunit = db.get(models.ObservationUnit, obs['Assay Name'])
         observation = models.Observation(
             observationUnitDbId=obs['Assay Name'],
